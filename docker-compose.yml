@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  database:
+    image: postgres:16.1-alpine
+    container_name: database
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: demo
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: spring-boot-hibernate-envers-demo:latest
+    container_name: app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/demo
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - database
